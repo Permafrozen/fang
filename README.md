@@ -24,7 +24,7 @@ Wayland Screenshot Tool with built-in image editor in Tauri/Rust.
   - Arrow tool
 
 **Goals**:
-- Under 200 MB RAM usage
+- Under 400 MB RAM usage
 - .ini/json file for options
   - Automatic saving to clipboard
   - Save location
