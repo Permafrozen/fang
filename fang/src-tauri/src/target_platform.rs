@@ -27,6 +27,14 @@ fn is_windows() -> bool {
     cfg!(target_os = "windows")
 }
 
+pub fn get_command_interface() -> String {
+    if is_linux() {
+        return ("sh").to_string();
+    } else {
+        return ("cmd").to_string()
+    }
+}
+
 pub fn get_environment() -> TargetPlatform {
     if is_linux() {
         if is_wayland() {
