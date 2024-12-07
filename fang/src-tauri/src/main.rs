@@ -9,6 +9,7 @@
 //      cargo run -- --runas-daemon
 
 mod target_platform;
+mod grab_image;
 
 use std::env;
 use rdev::{listen, Event, EventType, Key};
@@ -26,7 +27,7 @@ fn main() {
     let target: target_platform::TargetPlatform = target_platform::get_environment();
     println!("Running on platform \"{:?}\"", target);
 
-
+    
     // CLI arguments
     let args: Vec<String> = env::args().collect();
 
@@ -34,12 +35,19 @@ fn main() {
     // start different modes depending on how fang was started through CLI
     if args.contains(&String::from(RUN_AS_DAEMON_ARG)) {
         
+        // Check if tool for capturing screen is available before we start the loop
+        if let Err(error_message) = grab_image::check_availability(target) {
+            panic!("Error while checking image grabbing tool availability: {}", error_message);
+        }
+
         start_daemon_loop();
     
     }
     else if args.contains(&String::from(IMAGE_EDITOR_ARG)) {
         
         assert!(args.len() == 2, "Insufficient parameters with IMAGE_EDITOR_ARG: path to image as second argument required!");
+
+        // TODO: check if args[1] is a path and if it exists
 
         open_image_editor(&args[1])
 
