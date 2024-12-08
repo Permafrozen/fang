@@ -1,7 +1,5 @@
-let
-  pkgs = import <nixpkgs> { };
-in
-pkgs.mkShell {
+let pkgs = import <nixpkgs> { };
+in pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
     pkg-config
     gobject-introspection
@@ -11,7 +9,7 @@ pkgs.mkShell {
     nodejs
   ];
 
-  buildInputs = with pkgs;[
+  buildInputs = with pkgs; [
     at-spi2-atk
     atkmm
     cairo
@@ -25,4 +23,8 @@ pkgs.mkShell {
     webkitgtk_4_1
     openssl
   ];
+
+  shellHook = ''
+    export WEBKIT_DISABLE_DMABUF_RENDERER="1"
+  '';
 }
