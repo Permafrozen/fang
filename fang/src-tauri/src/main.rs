@@ -11,7 +11,7 @@
 mod target_platform;
 mod grab_image;
 
-use std::env;
+use std::{env, process::Command};
 use rdev::{listen, Event, EventType, Key};
 
 const RUN_AS_DAEMON_ARG: &str = "--runas-daemon";
@@ -27,6 +27,10 @@ fn main() {
     let target: target_platform::TargetPlatform = target_platform::get_environment();
     println!("Running on platform \"{:?}\"", target);
 
+
+    let tmp_screenshot_path = grab_image::get_temp_screenshot_file_path();
+    println!("Temporary screenshot path: {tmp_screenshot_path}");
+
     
     // CLI arguments
     let args: Vec<String> = env::args().collect();
@@ -36,9 +40,11 @@ fn main() {
     if args.contains(&String::from(RUN_AS_DAEMON_ARG)) {
         
         // Check if tool for capturing screen is available before we start the loop
-        if let Err(error_message) = grab_image::check_availability(target) {
+        
+        // TODO: fails with nircmd.exe on windows
+        /*if let Err(error_message) = grab_image::check_availability(target) {
             panic!("Error while checking image grabbing tool availability: {}", error_message);
-        }
+        }*/
 
         start_daemon_loop();
     
@@ -77,9 +83,37 @@ fn start_daemon_loop() {
 }
 
 fn capture_image() {
-    println!("capturing image...");
+    println!("Capturing image...");
 
-    // TODO: let target_platform decide the way it captures the image
+    let target = target_platform::get_environment();
+    let tmp_path = grab_image::get_temp_screenshot_file_path();
+
+    match grab_image::get_screentofile_command(target, &tmp_path) {
+        Ok(command) => {
+            println!("Taking screenshot with \"{}\"...", command);
+
+            let output = if target_platform::is_linux() {
+                Command::new("sh")
+                    .args(["-c", &command])
+                    .output()
+            } else {
+                Command::new("cmd")
+                    .args(["/C", &command])
+                    .output()
+            };
+
+            match output {
+                Ok(output) => {
+                    let stdout = String::from_utf8_lossy(&output.stdout);
+                    println!("Command output: {}", stdout);
+                }
+                Err(e) => eprintln!("Failed to execute command: {}", e),
+            }
+        }
+        Err(error_message) => {
+            eprintln!("get_screentofile_command failed: {}", error_message);
+        }
+    }
 }
 
 fn open_image_editor(path: &str) {
