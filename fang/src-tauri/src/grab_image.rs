@@ -7,6 +7,7 @@ pub fn is_executable_in_path(executable: &str) -> bool {
     which(executable).is_ok()
 }
 
+// TODO: doesn't work with nircmd?
 pub fn check_availability(platform: TargetPlatform) -> Result<(), String> {
     let required_executable = match platform {
         TargetPlatform::Windows => "nircmd",
