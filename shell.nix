@@ -3,6 +3,7 @@ in pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
     pkg-config
     gobject-introspection
+    xorg.libXtst
     rustc
     cargo
     cargo-tauri
