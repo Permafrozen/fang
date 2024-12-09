@@ -51,11 +51,11 @@ fn main() {
     }
     else if args.contains(&String::from(IMAGE_EDITOR_ARG)) {
         
-        assert!(args.len() == 2, "Insufficient parameters with IMAGE_EDITOR_ARG: path to image as second argument required!");
+        //assert!(args.len() == 2, "Insufficient parameters with IMAGE_EDITOR_ARG: path to image as second argument required!");
 
         // TODO: check if args[1] is a path and if it exists
 
-        open_image_editor(&args[1])
+        open_image_editor(/*&args[1]*/)
 
     } else {
         
@@ -116,8 +116,8 @@ fn capture_image() {
     }
 }
 
-fn open_image_editor(path: &str) {
-    println!("Opening image editor with {path} as target image");
+fn open_image_editor(/*path: &str*/) {
+    //println!("Opening image editor with {path} as target image");
 
     // TODO: pass path argument to fang GUI image editor and let it handle the rest
 
